@@ -1,0 +1,65 @@
+"""
+
+
+Titanic Dataset EDA report
+1. Overview of the Titanic Dataset
+    -Dataset contains 891 rows and 12 columns.
+    -Missing values handled for 'Age'(filled with median values) and 'Embarked' (filled with mode) columns.
+2. Key Insights
+    -Survival rates vary by passenger class, with first class having the highest survival rate(62%) and lowerer for third class(24%).
+    -Majority of passengers embarked from Southampton (S) followed by Cherbourg (C) and Queenstown (Q).
+    -Most passengers were adults, with a median age of 28 years.
+3. Visualizations
+    -Bar chart showing survival rates by passenger class.
+    -Histogram of passenger ages.
+    -Embarked port distribution
+    
+
+
+"""
+    
+ 
+import pandas as pd 
+import matplotlib.pyplot as plt 
+import seaborn as sns
+
+#load dataset
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+df = pd.read_csv(url)
+
+# Inspect Data
+print(df.info())
+print(df.describe())
+
+# handling missing values
+df["Age"] = df["Age"].fillna(df["Age"].median())
+df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
+
+#removing duplicates 
+df = df.drop_duplicates()
+
+#filter data : first class passenger
+first_class = df[df["Pclass"] == 1]
+print("First class passenger: \n", first_class.head())
+
+# visualisation survival rate by class 
+survival_by_class = df.groupby("Pclass")["Survived"].mean()
+survival_by_class.plot(kind = "bar", color = "skyblue" )
+plt.title("Survival by Class")
+plt.ylabel("Survival Rate")
+plt.show()
+
+
+# visualisation of passenger age distribution
+sns.histplot(df["Age"], kde = True, bins = 30, color = "purple")
+plt.title("Distribution of Passenger Ages")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# visualisation of embarked port distribution
+sns.countplot(x="Embarked", data=df, palette="Set2")    
+plt.title("Distribution of Embarked Ports")
+plt.xlabel("Embarked Port")
+plt.ylabel("Count")
+plt.show()
